@@ -1,8 +1,9 @@
 
 import {ObjectId} from "mongodb";
 import {CommentsModel} from "../models/comments.model";
-
-class CommentRepo{
+import {injectable} from "inversify";
+@injectable()
+export class CommentRepo{
     async createComment(comment:any){
 
         const createdComment = new CommentsModel(comment)
@@ -142,4 +143,3 @@ class CommentRepo{
         return result.deletedCount > 1
     }
 }
-export const commentRepo = new CommentRepo()

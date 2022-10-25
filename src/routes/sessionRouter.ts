@@ -1,79 +1,12 @@
-import {Request, Response, Router} from "express";
-import {authMiddleware} from "../middlewares/authMiddleware";
-import {sessionService} from "../application/session-service";
-import {jwtService} from "../application/jwt-service";
-import { ObjectId } from "mongodb";
-
-export const  sessionRouter = Router({})
-
-class SessionController{
-    async getUserSessions(req:Request, res:Response){
-        if(!req.cookies.refreshToken){
-            res.sendStatus(401)
-            return
-        }
-        const payload = await jwtService.getPayloadByRefreshToken(req.cookies.refreshToken)
-        if(!payload){
-            res.sendStatus(401)
-            return
-        }
-        const sessions = await sessionService.getSessionsByUserId(payload.userId)
-        res.status(200).send(sessions)
-    }
-    async deleteAllSessions(req:Request, res:Response){
-        if(!req.cookies.refreshToken){
-        res.sendStatus(401)
-        return
-    }
-        const payload = await jwtService.getPayloadByRefreshToken(req.cookies.refreshToken)
-        if(!payload){
-            res.sendStatus(401)
-            return
-        }
-        const isDeleted = await sessionService.removeSessionsByUserId(payload.userId, payload.deviceId);
-        if(!isDeleted){
-            res.sendStatus(401)
-            return
-        }
-
-        res.sendStatus(204)
-    }
-    async deleteOtherSessions(req:Request, res:Response){
-        if(!req.cookies.refreshToken){
-        res.sendStatus(401)
-        return
-    }
-        const payload = await jwtService.getPayloadByRefreshToken(req.cookies.refreshToken)
-        if(!payload){
-            res.sendStatus(401)
-            return
-        }
-        const session = await sessionService.getSessionByDeviceId(req.params.id);
-        if(!session){
-            res.sendStatus(404)
-            return
-        }
-
-        console.log("USER ID")
-        console.log(session)
-        console.log(payload)
+import {Router} from "express";
+import {container} from "../composition-root";
+import {SessionController} from "../controllers/session-controller";
 
 
-        const payloadUserId = new ObjectId(payload.ObjectId)
-        console.log(payloadUserId)
-        if(session.userId !== payload.userId)
-        {
-            res.sendStatus(403)
-            return
-        }
+export const sessionRouter = Router({})
 
-        const isDeleted = await sessionService.removeSessionByDeviceId(payload.userId,req.params.id)
-        res.sendStatus(204)}
-}
+const sessionController = container.resolve(SessionController)
 
-const sessionController = new SessionController()
-
-
-sessionRouter.get('/',sessionController.getUserSessions)
-sessionRouter.delete('/',sessionController.deleteAllSessions)
-sessionRouter.delete('/:id',sessionController.deleteOtherSessions)
+sessionRouter.get('/', sessionController.getUserSessions)
+sessionRouter.delete('/', sessionController.deleteAllSessions)
+sessionRouter.delete('/:id', sessionController.deleteOtherSessions)

@@ -1,7 +1,13 @@
-import {commentRepo} from "../repositories/comment-db-repo";
+import {CommentRepo} from "../repositories/comment-db-repo";
 import {ObjectId} from "mongodb";
-import {likesDbRepo} from "../repositories/likes-db-repo";
-class CommentsService{
+import {LikesRepo} from "../repositories/likes-db-repo";
+import {inject, injectable} from "inversify";
+@injectable()
+export class CommentsService{
+
+    constructor(protected commentRepo:CommentRepo,
+                protected likesDbRepo:LikesRepo) {
+    }
     async createComment(content:string, postId:string, userId:string, userName:string){
         const newComment = {
             content:content,
@@ -11,14 +17,14 @@ class CommentsService{
             createdAt:new Date().toISOString()
         }
 
-        const createdComment = await commentRepo.createComment(newComment)
+        const createdComment = await this.commentRepo.createComment(newComment)
         return createdComment
 
     }
     async getCommentByID(id:string, currentUserId:ObjectId){
-        const comment = await commentRepo.getCommentById(id);
+        const comment = await this.commentRepo.getCommentById(id);
         if(comment){
-            const likeInfo = await likesDbRepo.getLikesAndDislikesByCommentId(id)
+            const likeInfo = await this.likesDbRepo.getLikesAndDislikesByCommentId(id)
             const likesCountObj = likeInfo.filter((info)=> {
                 return info._id === 'Like'
             })
@@ -26,7 +32,7 @@ class CommentsService{
                 return info._id === 'Dislike'
             })
 
-            const myStatusInfo = await likesDbRepo.getLikeByCommentIdAndUserId(comment.id, currentUserId)
+            const myStatusInfo = await this.likesDbRepo.getLikeByCommentIdAndUserId(comment.id, currentUserId)
 
             comment.likesInfo = {
                 "likesCount": likesCountObj.length ? likesCountObj[0].count : 0,
@@ -37,19 +43,19 @@ class CommentsService{
         return comment;
     }
     async deleteComment(id:string){
-        return await commentRepo.deleteComment(id);
+        return await this.commentRepo.deleteComment(id);
     }
     async updateComment(id:string,content:string){
-        return await commentRepo.updateComment(id, content);
+        return await this.commentRepo.updateComment(id, content);
     }
     async getCommentsByPostId(userId:string, postId:string,pageNumber:number,pageSize:number, sortBy:any, sortDirection:any){
-        return await commentRepo.getCommentsByPostId(userId, postId, pageNumber, pageSize, sortBy, sortDirection)
+        return await this.commentRepo.getCommentsByPostId(userId, postId, pageNumber, pageSize, sortBy, sortDirection)
     }
     async makeLike(commentId:string, userId:ObjectId, status:string){
         const commentIdDb = new ObjectId(commentId)
         console.log("USERID")
         console.log(userId)
-        const existedLike = await likesDbRepo.getLikeByCommentIdAndUserId(commentId,userId)
+        const existedLike = await this.likesDbRepo.getLikeByCommentIdAndUserId(commentId,userId)
         const likeInfo:{commentId:ObjectId, userId:ObjectId, status:string} = {
             commentId:commentIdDb,
             userId,
@@ -58,13 +64,11 @@ class CommentsService{
         console.log(likeInfo)
         let like = null;
         if(existedLike){
-            like = await likesDbRepo.updateLike(likeInfo)
+            like = await this.likesDbRepo.updateLike(likeInfo)
         }
         else{
-            like = await likesDbRepo.createLike(likeInfo);
+            like = await this.likesDbRepo.createLike(likeInfo);
         }
         return like;
     }
 }
-
-export const commentsService = new CommentsService()

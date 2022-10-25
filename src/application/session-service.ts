@@ -4,9 +4,10 @@ import {SessionDbType, SessionType} from "../types";
 import {jwtService} from "./jwt-service";
 import {parseConnectionUrl} from "nodemailer/lib/shared";
 import jwt from "jsonwebtoken";
+import {injectable} from "inversify";
 
-
-export const sessionService = {
+@injectable()
+export class SessionService {
     async createSession(user:any, ip:string, title:string):Promise<{accessToken:string, refreshToken:string} | null>{
         const userId = user.id.toString();
         const deviceId = uuidv4();
@@ -32,7 +33,7 @@ export const sessionService = {
             accessToken:tokens.accessToken,
             refreshToken:tokens.refreshToken,
         }
-    },
+    }
 
     async updateSession(refreshToken:string):Promise<{accessToken:string, refreshToken:string}|null>{
         const payload = await jwtService.getPayloadByRefreshToken(refreshToken);
@@ -60,18 +61,18 @@ export const sessionService = {
             accessToken:tokens.accessToken,
             refreshToken:tokens.refreshToken,
         }
-    },
+    }
     async removeSessionByDeviceId(userId:string, devId:string){
         return await sessionDbRepo.removeSessionByDeviceId(userId,devId);
-    },
+    }
 
     async removeSessionsByUserId(userId:string, deviceId:string){
         return await sessionDbRepo.removeAllSessionsByUserId(userId, deviceId);
-    },
+    }
 
     async getSessionsByUserId(userId:string){
                 return await sessionDbRepo.getSessionsByUserId(userId);
-    },
+    }
     async getSessionByDeviceId(deviceId:string){
         return await sessionDbRepo.getSessionByDeviceId(deviceId);
     }

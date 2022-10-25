@@ -1,10 +1,14 @@
 import bcrypt from 'bcrypt';
-import {userRepo} from "../repositories/user-db-repo";
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add';
 import {emailManager} from "../managers/emailManager";
+import {UserRepo} from "../repositories/user-db-repo";
+import {injectable} from "inversify";
 
-class UserService{
+@injectable()
+export class UserService{
+    constructor(protected userRepo: UserRepo) {
+    }
     async createUser(login:string, password:string, email:string):Promise<any>{
         console.log("create user")
         const passwordSalt = await bcrypt.genSalt(12)
@@ -23,7 +27,7 @@ class UserService{
             }
         }
 
-        const createResult = await userRepo.createUser(newUser)
+        const createResult = await this.userRepo.createUser(newUser)
         try{
             await emailManager.sendConfirmation(newUser);
         }
@@ -47,7 +51,7 @@ class UserService{
         return hash
     }
     async checkCredentials(login:string, password:string):Promise<any>{
-        const user = await userRepo.findByLogin(login)
+        const user = await this.userRepo.findByLogin(login)
         console.log("User in creds with login ---> "+login)
         if(!user) return null
         const passwordHash = await this._generateHash(password, user.passwordSalt)
@@ -57,14 +61,14 @@ class UserService{
         return user
     }
     async deleteUser(id:string){
-        return await userRepo.deleteUser(id);
+        return await this.userRepo.deleteUser(id);
     }
     async getUserById(id:string){
-        const user = await userRepo.findById(id)
+        const user = await this.userRepo.findById(id)
         return user
     }
     async getUsers( searchLoginTerm:any, searchEmailTerm:any, pageNumber: number, pageSize: number, sortBy: any, sortDirection: any){
-        return await userRepo.getUsers(searchLoginTerm, searchEmailTerm,pageNumber, pageSize, sortBy, sortDirection);
+        return await this.userRepo.getUsers(searchLoginTerm, searchEmailTerm,pageNumber, pageSize, sortBy, sortDirection);
     }
     async generatePasswordHash(password:string){
         const passwordSalt = await bcrypt.genSalt(12)
@@ -76,5 +80,3 @@ class UserService{
         }
     }
 }
-
-export const userService = new UserService()

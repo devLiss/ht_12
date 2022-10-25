@@ -1,13 +1,16 @@
-import {blogsRepo} from "../repositories/blog-db-repo";
+import {BlogsRepo} from "../repositories/blog-db-repo";
 import {blogType} from "../types";
-import * as QueryString from "querystring";
+import {injectable} from "inversify";
+@injectable()
+export class BlogsService{
 
-class BlogsService{
+    constructor(protected blogsRepo:BlogsRepo) {
+    }
     async findAllBlogs(searchNameTerm: any, pageNumber: number, pageSize: number, sortBy: any, sortDirection: any){
-        return await blogsRepo.findAllBlogs(searchNameTerm, pageNumber,pageSize, sortBy, sortDirection);
+        return await this.blogsRepo.findAllBlogs(searchNameTerm, pageNumber,pageSize, sortBy, sortDirection);
     }
     async findBlogById(id:string){
-        return blogsRepo.findBlogById(id);
+        return this.blogsRepo.findBlogById(id);
     }
     async createBlog(name:string, youtubeUrl:string){
         const blog:blogType = {
@@ -16,15 +19,13 @@ class BlogsService{
             createdAt:new Date().toISOString()
         }
 
-        const createdBlog = await blogsRepo.createBlog(blog);
+        const createdBlog = await this.blogsRepo.createBlog(blog);
         return createdBlog;
     }
     async deleteBlog(id:string){
-        return await blogsRepo.deleteBlog(id);
+        return await this.blogsRepo.deleteBlog(id);
     }
     async updateBlog(id:string, name:string, youtubeUrl:string){
-        return await blogsRepo.updateBlog(id, name, youtubeUrl);
+        return await this.blogsRepo.updateBlog(id, name, youtubeUrl);
     }
 }
-
-export const blogsService = new BlogsService()

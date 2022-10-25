@@ -1,7 +1,8 @@
 import {ObjectId} from "mongodb";
 import {LikesModel} from "../models/likes.model";
-
-class LikesRepo{
+import {injectable} from "inversify";
+@injectable()
+export class LikesRepo{
     async createLike(like:{commentId:ObjectId, userId:ObjectId, status:string}){
 
         const createdLike = new LikesModel(like)
@@ -33,5 +34,3 @@ class LikesRepo{
         return counts;
     }
 }
-
-export const likesDbRepo = new LikesRepo()

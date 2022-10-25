@@ -2,18 +2,9 @@ import {userDBType} from "../types";
 import jwt, {verify} from 'jsonwebtoken'
 import {settings} from "../settings/settings";
 import {ObjectId} from "mongodb";
-
-export const jwtService = {
-    /*async generateTokens(userId:any, deviceId:string){
-        const token = jwt.sign({userId:userId}, settings.JWT_SECRET, {expiresIn:'10s'})
-        const refreshToken = jwt.sign({deviceId:deviceId, userId:userId}, settings.JWT_REFRESH_SECRET, {expiresIn:'20s'})
-
-        return {
-            accessToken:token,
-            refreshToken:refreshToken
-        }
-    },*/
-
+import {injectable} from "inversify";
+@injectable()
+export class JwtService{
     async generateTokens(userId:any, deviceId:string){
         const token = jwt.sign({userId:userId}, settings.JWT_SECRET, {expiresIn:'1h'})
         const refreshToken = jwt.sign({deviceId:deviceId,userId:userId}, settings.JWT_REFRESH_SECRET, {expiresIn:'2h'})
@@ -22,8 +13,7 @@ export const jwtService = {
             accessToken:token,
             refreshToken:refreshToken
         }
-    },
-
+    }
     async getUserByAccessToken(token:string){
       try{
           const result:any = jwt.verify(token, settings.JWT_SECRET);
@@ -34,8 +24,7 @@ export const jwtService = {
           console.log(e)
           return null
       }
-    },
-
+    }
     async getPayloadByRefreshToken(refreshToken:string):Promise<any>{
         try {
             const result: any = jwt.verify(refreshToken, settings.JWT_REFRESH_SECRET);
@@ -46,9 +35,7 @@ export const jwtService = {
             console.log(e)
             return null
         }
-    },
-
-
+    }
     async getUserByRefreshToken(refreshToken:string){
         try{
             const result:any = jwt.verify(refreshToken, settings.JWT_REFRESH_SECRET);
@@ -57,15 +44,5 @@ export const jwtService = {
         catch (e){
             return null
         }
-    },
-
-    /*async revokeToken(userId:string, token:string){
-        await tokenRepo.revokeToken(userId, token)
-        return null
-    },
-
-    async checkRevokedTokens(userId:string, token:string){
-        const findToken = await tokenRepo.getBlackList(userId,token);
-        return findToken
-    }*/
+    }
 }

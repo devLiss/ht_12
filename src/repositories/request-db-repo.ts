@@ -1,6 +1,7 @@
 
 import {RequestModel} from "../models/request.model";
-
+import {injectable} from "inversify";
+@injectable()
 class RequestDbRepo{
     async createRequestRow (ip:string, url:string, requestDate:Date){
         const request = new RequestModel({ip, url, requestDate})
@@ -13,4 +14,3 @@ class RequestDbRepo{
         return requestsCount
     }
 }
-export const requestDbRepo = new RequestDbRepo()

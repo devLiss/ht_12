@@ -1,6 +1,7 @@
 import {blogType} from "../types";
 import {ObjectId} from "mongodb";
 import {BlogsModel} from "../models/blogs.model";
+import {injectable} from "inversify";
 
 export interface blogsPaginator{
     pageCount:number,
@@ -9,8 +10,8 @@ export interface blogsPaginator{
     totalCount:number,
     items:blogType[]
 }
-
-class BlogsRepo{
+@injectable()
+export class BlogsRepo{
     async findAllBlogs(searchNameTerm:any, pageNumber:number,pageSize:number, sortBy:string, sortDirection:any):Promise<{ pagesCount: number; pageSize: number; page: number; totalCount: number; items:any[]}>{
 
         console.log("seqarchNameTerm "+searchNameTerm);
@@ -77,5 +78,3 @@ class BlogsRepo{
         return result.deletedCount ===1
     }
 }
-
-export const blogsRepo = new BlogsRepo()

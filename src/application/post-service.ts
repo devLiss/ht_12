@@ -1,8 +1,9 @@
 import {postRepo} from "../repositories/post-db-repo";
 import {postType} from "../types";
+import {injectable} from "inversify";
 
-
-class PostService{
+@injectable()
+export class PostService{
     async findAllPosts(pageNumber:number, pageSize:number, sortBy: any , sortDirection: any){
         return await postRepo.findAllPosts(pageNumber,pageSize, sortBy, sortDirection);
     }
@@ -36,5 +37,3 @@ class PostService{
         return postRepo.getPostsByBlogId(blogId,pageNumber, pageSize,sortBy,sortDirection);
     }
 }
-
-export const postService = new PostService()

@@ -1,6 +1,7 @@
 import {emailAdapter} from "../adapters/emailAdapter";
-
-export const emailManager = {
+import {injectable} from "inversify";
+@injectable()
+export class EmailManager {
     async sendConfirmation(user:any){
 
         const subject = "Регистрация";
@@ -11,7 +12,7 @@ export const emailManager = {
 
         console.log(message)
         return await emailAdapter.send( user,subject, message);
-    },
+    }
     async sendRecoveryCode(user:any){
 
         const subject = "Восстановление пароля";
@@ -22,5 +23,5 @@ export const emailManager = {
 
         console.log(message)
         return await emailAdapter.send( user,subject, message);
-    },
+    }
 }
