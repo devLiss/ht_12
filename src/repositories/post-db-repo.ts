@@ -3,7 +3,7 @@ import {ObjectId} from "mongodb";
 import {PostsModel} from "../models/posts.model";
 import {injectable} from "inversify";
 @injectable()
-class PostRepo{
+export class PostRepo{
     async findAllPosts(pageNumber:number,pageSize:number, sortBy:string, sortDirection:any){
         console.log("PN "+pageNumber)
         console.log("PS " + pageSize)

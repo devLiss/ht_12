@@ -2,7 +2,7 @@
 import {RequestModel} from "../models/request.model";
 import {injectable} from "inversify";
 @injectable()
-class RequestDbRepo{
+export class RequestDbRepo{
     async createRequestRow (ip:string, url:string, requestDate:Date){
         const request = new RequestModel({ip, url, requestDate})
         await request.save();

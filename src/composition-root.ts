@@ -15,6 +15,10 @@ import {BlogsService} from "./application/blogs-service";
 import {BlogsRepo} from "./repositories/blog-db-repo";
 import {CommentRepo} from "./repositories/comment-db-repo";
 import {LikesRepo} from "./repositories/likes-db-repo";
+import {JwtService} from "./application/jwt-service";
+import {PostRepo} from "./repositories/post-db-repo";
+import {RequestDbRepo} from "./repositories/request-db-repo";
+import {SessionDbRepo} from "./repositories/session-db-repo";
 
 export const container = new Container()
 //controllers
@@ -32,9 +36,13 @@ container.bind<CommentsService>(CommentsService).to(CommentsService)
 container.bind<SessionService>(SessionService).to(SessionService)
 container.bind<PostService>(PostService).to(PostService)
 container.bind<BlogsService>(BlogsService).to(BlogsService)
+container.bind<JwtService>(JwtService).to(JwtService)
 
 //repos
 container.bind<UserRepo>(UserRepo).to(UserRepo)
 container.bind<BlogsRepo>(BlogsRepo).to(BlogsRepo)
 container.bind<CommentRepo>(CommentRepo).to(CommentRepo)
 container.bind<LikesRepo>(LikesRepo).to(LikesRepo)
+container.bind<PostRepo>(PostRepo).to(PostRepo)
+container.bind<RequestDbRepo>(RequestDbRepo).to(RequestDbRepo)
+container.bind<SessionDbRepo>(SessionDbRepo).to(SessionDbRepo)

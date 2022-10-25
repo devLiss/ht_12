@@ -3,7 +3,7 @@ import {ObjectId} from "mongodb";
 import {SessionModel} from "../models/session.model";
 import {injectable} from "inversify";
 @injectable()
-class SessionDbRepo{
+export class SessionDbRepo{
 
     async createSession(session:SessionDbType):Promise<SessionType>{
         console.log(session)
