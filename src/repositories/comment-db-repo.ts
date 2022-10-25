@@ -2,7 +2,7 @@
 import {ObjectId} from "mongodb";
 import {CommentsModel} from "../models/comments.model";
 
-export const commentRepo = {
+class CommentRepo{
     async createComment(comment:any){
 
         const createdComment = new CommentsModel(comment)
@@ -15,15 +15,15 @@ export const commentRepo = {
         }
 
         return createdComment.toJSON();
-    },
+    }
 
     async getCommentById(id:string){
         return CommentsModel.findById(id);
-    },
+    }
     async deleteComment(id:string){
         const result = await CommentsModel.deleteOne({_id:new ObjectId(id)})
         return result.deletedCount === 1
-    },
+    }
     async updateComment(id:string, content:string){
         const comment = await CommentsModel.findOne({_id:new ObjectId(id)});
         if(!comment){
@@ -35,7 +35,7 @@ export const commentRepo = {
         //const result = await commentsCollection.updateOne({_id:new ObjectId(id)},{$set:{content:content}})
         //return result.matchedCount === 1
         return true
-    },
+    }
     async getCommentsByPostId(userId:string,postId:string,pageNumber:number,pageSize:number, sortBy:string, sortDirection:any){
         /*const comments = await commentsCollection.find({postId:new ObjectId(postId)},
             {projection:{_id:0,
@@ -92,7 +92,7 @@ export const commentRepo = {
                         $match:{"userId":new ObjectId(userId)}
                     },{
                         $project:{_id:0,"status":1}
-                        }],
+                    }],
                     as: "myStatus"
                 }
             },
@@ -112,20 +112,20 @@ export const commentRepo = {
             .skip((pageNumber-1)*pageSize)
             .limit(pageSize)
             .sort( {[sortBy] : sortDirection})
-            const temp = comments.map((comment) => {
-                const likesCountArr = comment.likesInfo.likesCount
-                const dislikesCountArr = comment.likesInfo.dislikesCount
-                const myStatusArr = comment.likesInfo.myStatus
+        const temp = comments.map((comment) => {
+            const likesCountArr = comment.likesInfo.likesCount
+            const dislikesCountArr = comment.likesInfo.dislikesCount
+            const myStatusArr = comment.likesInfo.myStatus
 
-                const likesInfo = {
-                    likesCount: likesCountArr.length ? likesCountArr[0].count : 0,
-                    dislikesCount: dislikesCountArr.length ? dislikesCountArr[0].count : 0,
-                    myStatus: myStatusArr.length ? myStatusArr[0].status : "None"
-                }
-                comment.likesInfo = likesInfo
-                return comment
+            const likesInfo = {
+                likesCount: likesCountArr.length ? likesCountArr[0].count : 0,
+                dislikesCount: dislikesCountArr.length ? dislikesCountArr[0].count : 0,
+                myStatus: myStatusArr.length ? myStatusArr[0].status : "None"
+            }
+            comment.likesInfo = likesInfo
+            return comment
         });
-            console.log(temp)
+        console.log(temp)
 
         const totalCount = await CommentsModel.countDocuments({postId:new ObjectId(postId)});
 
@@ -136,9 +136,10 @@ export const commentRepo = {
             totalCount:totalCount,
             items:comments
         }
-    },
+    }
     async deleteAll():Promise<boolean>{
         const result = await CommentsModel.deleteMany({})
         return result.deletedCount > 1
     }
 }
+export const commentRepo = new CommentRepo()

@@ -4,8 +4,7 @@ import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add';
 import {emailManager} from "../managers/emailManager";
 
-
-export const userService = {
+class UserService{
     async createUser(login:string, password:string, email:string):Promise<any>{
         console.log("create user")
         const passwordSalt = await bcrypt.genSalt(12)
@@ -42,11 +41,11 @@ export const userService = {
             email: createResult.email,
             createdAt: createResult.createdAt
         }
-    },
+    }
     async _generateHash(password:string, salt:string){
         const hash = await bcrypt.hash(password, salt)
         return hash
-    },
+    }
     async checkCredentials(login:string, password:string):Promise<any>{
         const user = await userRepo.findByLogin(login)
         console.log("User in creds with login ---> "+login)
@@ -56,17 +55,17 @@ export const userService = {
             return null
         }
         return user
-    },
+    }
     async deleteUser(id:string){
         return await userRepo.deleteUser(id);
-    },
+    }
     async getUserById(id:string){
         const user = await userRepo.findById(id)
         return user
-    },
+    }
     async getUsers( searchLoginTerm:any, searchEmailTerm:any, pageNumber: number, pageSize: number, sortBy: any, sortDirection: any){
         return await userRepo.getUsers(searchLoginTerm, searchEmailTerm,pageNumber, pageSize, sortBy, sortDirection);
-    },
+    }
     async generatePasswordHash(password:string){
         const passwordSalt = await bcrypt.genSalt(12)
         const passwordHash = await this._generateHash(password, passwordSalt)
@@ -76,5 +75,6 @@ export const userService = {
             passwordHash:passwordHash
         }
     }
-
 }
+
+export const userService = new UserService()

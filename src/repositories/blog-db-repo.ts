@@ -1,5 +1,4 @@
 import {blogType} from "../types";
-//import {blogCollection} from "./db";
 import {ObjectId} from "mongodb";
 import {BlogsModel} from "../models/blogs.model";
 
@@ -11,7 +10,7 @@ export interface blogsPaginator{
     items:blogType[]
 }
 
-export const blogsRepo = {
+class BlogsRepo{
     async findAllBlogs(searchNameTerm:any, pageNumber:number,pageSize:number, sortBy:string, sortDirection:any):Promise<{ pagesCount: number; pageSize: number; page: number; totalCount: number; items:any[]}>{
 
         console.log("seqarchNameTerm "+searchNameTerm);
@@ -20,7 +19,7 @@ export const blogsRepo = {
             .skip((pageNumber-1)*pageSize)
             .limit(pageSize)
             .sort( {[sortBy] : sortDirection} )
-            //.toArray();
+        //.toArray();
 
         console.log(blogs);
         /*const temp = blogs.map((blog) => {
@@ -38,7 +37,7 @@ export const blogsRepo = {
             items:blogs
         }
         return outputObj
-    },
+    }
 
     async findBlogById(id:string):Promise<any>{
         const blog = await BlogsModel.findOne({_id:new ObjectId(id)});
@@ -48,7 +47,7 @@ export const blogsRepo = {
         }*/
 
         return blog
-    },
+    }
     async createBlog(blog:blogType):Promise<blogType | null>{
 
         const createdBlog = await BlogsModel.create(blog);
@@ -56,11 +55,11 @@ export const blogsRepo = {
         // @ts-ignore
         //delete Object.assign(blog, {["id"]: blog["_id"] })["_id"];
         return createdBlog;
-    },
+    }
     async deleteBlog(id:string):Promise<boolean>{
         const result = await BlogsModel.deleteOne({_id:new ObjectId(id)});
         return result.deletedCount === 1
-    },
+    }
     async updateBlog(id:string, name:string, youtubeUrl:string ):Promise<boolean>{
         const blog = await BlogsModel.findOne({_id:new ObjectId(id)})
         if(!blog){
@@ -72,10 +71,11 @@ export const blogsRepo = {
         blog.save();
 
         return true
-    },
+    }
     async deleteAll():Promise<boolean>{
         const result = await BlogsModel.deleteMany({})
         return result.deletedCount ===1
     }
-
 }
+
+export const blogsRepo = new BlogsRepo()

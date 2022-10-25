@@ -2,13 +2,13 @@ import {blogsRepo} from "../repositories/blog-db-repo";
 import {blogType} from "../types";
 import * as QueryString from "querystring";
 
-export const blogsService = {
-   async findAllBlogs(searchNameTerm: any, pageNumber: number, pageSize: number, sortBy: any, sortDirection: any){
-       return await blogsRepo.findAllBlogs(searchNameTerm, pageNumber,pageSize, sortBy, sortDirection);
-   },
+class BlogsService{
+    async findAllBlogs(searchNameTerm: any, pageNumber: number, pageSize: number, sortBy: any, sortDirection: any){
+        return await blogsRepo.findAllBlogs(searchNameTerm, pageNumber,pageSize, sortBy, sortDirection);
+    }
     async findBlogById(id:string){
-       return blogsRepo.findBlogById(id);
-    },
+        return blogsRepo.findBlogById(id);
+    }
     async createBlog(name:string, youtubeUrl:string){
         const blog:blogType = {
             name:name,
@@ -18,12 +18,13 @@ export const blogsService = {
 
         const createdBlog = await blogsRepo.createBlog(blog);
         return createdBlog;
-    },
-    async deleteBlog(id:string){
-       return await blogsRepo.deleteBlog(id);
-    },
-    async updateBlog(id:string, name:string, youtubeUrl:string){
-       return await blogsRepo.updateBlog(id, name, youtubeUrl);
     }
-
+    async deleteBlog(id:string){
+        return await blogsRepo.deleteBlog(id);
+    }
+    async updateBlog(id:string, name:string, youtubeUrl:string){
+        return await blogsRepo.updateBlog(id, name, youtubeUrl);
+    }
 }
+
+export const blogsService = new BlogsService()

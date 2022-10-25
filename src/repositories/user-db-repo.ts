@@ -40,7 +40,7 @@ export const userRepo = {
         const user = await UserModel.findById(id)
         console.log("Repo")
         console.log(user)
-        return user ? user.toJSON() : null
+        return user
     },
     async deleteUser(id:string){
         const result = await UserModel.deleteOne({_id:new ObjectId(id)})

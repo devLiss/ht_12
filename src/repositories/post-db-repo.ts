@@ -2,7 +2,7 @@ import {postType} from "../types";
 import {ObjectId} from "mongodb";
 import {PostsModel} from "../models/posts.model";
 
-export const postRepo = {
+class PostRepo{
     async findAllPosts(pageNumber:number,pageSize:number, sortBy:string, sortDirection:any){
         console.log("PN "+pageNumber)
         console.log("PS " + pageSize)
@@ -27,7 +27,7 @@ export const postRepo = {
         }
         return outputObj
 
-    },
+    }
     async findPostById(id:string|null){
         if(!id){
             return null
@@ -38,11 +38,11 @@ export const postRepo = {
             delete Object.assign(post, {["id"]: post["_id"] })["_id"];
         }*/
         return post
-    },
+    }
     async deletePost(id:string){
         const result = await PostsModel.deleteOne({_id:new ObjectId(id)});
         return result.deletedCount === 1
-    },
+    }
     async createPost(post:postType){
         const createdPost = new PostsModel(post)
         createdPost.save();
@@ -50,7 +50,7 @@ export const postRepo = {
         // @ts-ignore
         delete Object.assign(post, {["id"]: post["_id"] })["_id"];*/
         return createdPost
-    },
+    }
     async updatePost( id:string,
                       title: string,
                       shortDescription: string,
@@ -74,7 +74,7 @@ export const postRepo = {
                 blogId:blogId
             }})*/
         return true//result.matchedCount === 1
-    },
+    }
 
     async getPostsByBlogId(blogId:string,pageNumber:number, pageSize:number,sortBy:string,sortDirection:any){
 
@@ -103,9 +103,10 @@ export const postRepo = {
             items:temp
         }
         return outputObj
-    },
+    }
     async deleteAll():Promise<boolean>{
         const result = await PostsModel.deleteMany({})
         return result.deletedCount === 1
     }
 }
+export const postRepo = new PostRepo()

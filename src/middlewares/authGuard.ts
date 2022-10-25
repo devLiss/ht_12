@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {userService} from "../domain/user-service";
+import {userService} from "../application/user-service";
 
 export const authGuard = async (req:Request, res:Response, next:NextFunction)=>
 {

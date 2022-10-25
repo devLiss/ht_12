@@ -1,7 +1,7 @@
 import {v4 as uuidv4} from "uuid";
 import {sessionDbRepo} from "../repositories/session-db-repo";
 import {SessionDbType, SessionType} from "../types";
-import {jwtService} from "../application/jwt-service";
+import {jwtService} from "./jwt-service";
 import {parseConnectionUrl} from "nodemailer/lib/shared";
 import jwt from "jsonwebtoken";
 
