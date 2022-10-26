@@ -42,7 +42,7 @@ app.delete('/testing/all-data',async (req: Request, res: Response) => {
     await commentRepo.deleteAll()
     await sessionDbRepo.deleteAll()
     //requestDbRepo.deleteAll()
-    //likedDbRepo.deleteAll()
+    await likedDbRepo.deleteAll()
     res.status(204).send([])
 })
 app.use('/blogs', blogsRouter)

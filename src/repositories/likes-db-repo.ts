@@ -51,4 +51,7 @@ export class LikesRepo{
         )//.toArray();
         return counts;
     }
+    async deleteAll(){
+        await LikesModel.deleteMany({})
+    }
 }
