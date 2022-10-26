@@ -16,7 +16,9 @@ const postsSchema = new mongoose.Schema({
     title:String,
     shortDescription:String,
     content:String,
+    blogName:String,
     blogId:String,
+    createdAt:String,
     extendedLikesInfo:{type:extendedLikesInfo}
 },{
     versionKey: false
