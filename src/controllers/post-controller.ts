@@ -56,7 +56,7 @@ export class PostController {
             }
         }
         const post = await this.postService.findPostById(req.params.id,currentUserId);
-        post ? res.status(200).send(post[0]) : res.send(404)
+        post ? res.status(200).send(post) : res.send(404)
     }
 
     async updatePost(req: Request, res: Response) {

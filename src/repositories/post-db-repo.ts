@@ -235,7 +235,7 @@ export class PostRepo{
         });
 
         /**/
-        return temp
+        return temp[0]
     }
     async deletePost(id:string){
         const result = await PostsModel.deleteOne({_id:new ObjectId(id)});
