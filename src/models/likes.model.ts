@@ -4,8 +4,8 @@ const likesScheme = new mongoose.Schema({
     commentId:mongoose.SchemaTypes.ObjectId,
     postId:mongoose.SchemaTypes.ObjectId,
     addedAt:{type:String},
-    login:{type:String},
     userId:mongoose.SchemaTypes.ObjectId,
+    login:{type:String},
     status:{type:String,required:true}
 
 },{
