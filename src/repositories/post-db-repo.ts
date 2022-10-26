@@ -7,6 +7,7 @@ export class PostRepo{
     async findAllPosts(userId:ObjectId, pageNumber:number ,pageSize:number, sortBy:string, sortDirection:any){
         console.log("PN "+pageNumber)
         console.log("PS " + pageSize)
+        console.log(userId)
 
        const posts = await PostsModel.aggregate([{
            $lookup: {
@@ -47,7 +48,7 @@ export class PostRepo{
                    localField: "_id",
                    foreignField: "postId",
                    pipeline: [{
-                       $match: { "userId": userId }
+                       $match: { "userId": new ObjectId(userId) }
                    }, {
                        $project: { _id: 0, "status": 1 }
                    }],
@@ -105,6 +106,7 @@ export class PostRepo{
             const likesCountArr = post.extendedLikesInfo.likesCount
             const dislikesCountArr = post.extendedLikesInfo.dislikesCount
             const myStatusArr = post.extendedLikesInfo.myStatus
+            console.log(post.extendedLikesInfo)
 
             const extendedLikesInfo = {
                 likesCount: likesCountArr.length ? likesCountArr[0].count : 0,
@@ -170,7 +172,7 @@ export class PostRepo{
                     localField: "_id",
                     foreignField: "postId",
                     pipeline: [{
-                        $match: { "userId": userId }
+                        $match: { "userId": new ObjectId(userId) }
                     }, {
                         $project: { _id: 0, "status": 1 }
                     }],
@@ -315,7 +317,7 @@ export class PostRepo{
                     localField: "_id",
                     foreignField: "postId",
                     pipeline: [{
-                        $match: { "userId": userId }
+                        $match: { "userId": new ObjectId(userId) }
                     }, {
                         $project: { _id: 0, "status": 1 }
                     }],

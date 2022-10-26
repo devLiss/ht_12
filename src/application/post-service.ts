@@ -44,7 +44,7 @@ export class PostService{
     }
 
     async makeLike(postId:string, userId:ObjectId, userLogin:string, status:string){
-        console.log("Make like for post!")
+        console.log("Make like for post! -->", postId)
         console.log(status)
         const postIdDb = new ObjectId(postId)
         console.log("USERID")

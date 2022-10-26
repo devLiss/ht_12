@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const extendedLikesInfo = new mongoose.Schema({
     "likesCount": Number,
     "dislikesCount": Number,
-    "myStatus": String,
+    "myStatus": {},
     "newestLikes": [
         {
             "addedAt": String,
