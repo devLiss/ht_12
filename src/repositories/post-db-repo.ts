@@ -64,7 +64,7 @@ export class PostRepo{
                        },
                    },{
                        $sort: {
-                           _id: 1
+                           "addedAt": -1
                        },
                    },{
                        $limit: 3
@@ -187,7 +187,7 @@ export class PostRepo{
                         },
                     },{
                         $sort: {
-                            _id: 1
+                            "addedAt": -1
                         },
                     },{
                         $limit: 3
