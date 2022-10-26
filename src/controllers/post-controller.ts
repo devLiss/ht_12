@@ -4,6 +4,7 @@ import {CommentsService} from "../application/comments-service";
 import {injectable} from "inversify";
 import {JwtService} from "../application/jwt-service";
 import {PostService} from "../application/post-service";
+import {ObjectId} from "mongodb";
 
 @injectable()
 export class PostController {
@@ -16,7 +17,19 @@ export class PostController {
 
     async getPosts(req: Request, res: Response) {
         console.log(req.query)
-        const data = await this.postService.findAllPosts(+req.query.pageNumber!, +req.query.pageSize!, req.query.sortBy, req.query.sortDirection);
+        let currentUserId = new ObjectId();
+        if(req.headers.authorization) {
+            const token = req.headers.authorization.split(' ')[1]
+            console.log(token)
+            const userId = await this.jwtService.getUserByAccessToken(token);
+            console.log("UserId = " + userId)
+
+            if(userId){
+                const user = await this.userService.getUserById(userId.toString());
+                if(user){currentUserId = user.id}
+            }
+        }
+        const data = await this.postService.findAllPosts(currentUserId,+req.query.pageNumber!, +req.query.pageSize!, req.query.sortBy, req.query.sortDirection);
         res.status(200).send(data);
     }
 
@@ -30,7 +43,19 @@ export class PostController {
     }
 
     async getPostById(req: Request, res: Response) {
-        const post = await this.postService.findPostById(req.params.id);
+        let currentUserId = new ObjectId();
+        if(req.headers.authorization) {
+            const token = req.headers.authorization.split(' ')[1]
+            console.log(token)
+            const userId = await this.jwtService.getUserByAccessToken(token);
+            console.log("UserId = " + userId)
+
+            if(userId){
+                const user = await this.userService.getUserById(userId.toString());
+                if(user){currentUserId = user.id}
+            }
+        }
+        const post = await this.postService.findPostById(req.params.id,currentUserId);
         post ? res.status(200).send(post) : res.send(404)
     }
 
@@ -51,7 +76,7 @@ export class PostController {
     }
 
     async getCommentsByPostId(req: Request, res: Response) {
-        const post = await this.postService.findPostById(req.params.postId);
+        const post = await this.postService.findPostById(req.params.postId,new ObjectId());
         if (!post) {
             res.send(404)
             return
@@ -77,7 +102,8 @@ export class PostController {
     }
 
     async createComment(req: Request, res: Response) {
-        const post = await this.postService.findPostById(req.params.postId);
+        //@ts-ignore
+        const post = await this.postService.findPostById(req.params.postId, req.user.id);
         console.log(post)
         if (!post) {
             res.send(404)
@@ -86,5 +112,20 @@ export class PostController {
         //@ts-ignore
         const comment = await this.commentsService.createComment(req.body.content, post!.id, req.user.id, req.user.login)
         res.status(201).send(comment)
+    }
+
+    async makeLike(req: Request, res: Response){
+
+        //@ts-ignore
+        const post = await this.postService.findPostById(req.params.postId, req.user._id)
+        if(!post){
+            res.sendStatus(404)
+            return
+        }
+
+        console.log(req.body)
+        //@ts-ignore
+        await this.postService.makeLike(req.params.postId, req.user._id, req.user.login, req.body.likeStatus)
+        res.sendStatus(204)
     }
 }

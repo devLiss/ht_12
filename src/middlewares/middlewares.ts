@@ -1,6 +1,5 @@
 import {CustomValidator, query, body} from "express-validator";
-import {blogsRepo} from "../repositories/blog-db-repo";
-
+import {BlogsRepo} from "../repositories/blog-db-repo";
 
 const isValidUrl: CustomValidator = value => {
     if(!/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/.test(value)){
@@ -10,6 +9,7 @@ const isValidUrl: CustomValidator = value => {
 };
 
 const isBlogIdValid: CustomValidator = async value => {
+    const blogsRepo = new BlogsRepo()
     const flag = await blogsRepo.findBlogById(value)
     if (!flag) {
         throw new Error('Неверный BlogID')

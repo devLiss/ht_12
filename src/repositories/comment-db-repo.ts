@@ -38,18 +38,6 @@ export class CommentRepo{
         return true
     }
     async getCommentsByPostId(userId:string,postId:string,pageNumber:number,pageSize:number, sortBy:string, sortDirection:any){
-        /*const comments = await commentsCollection.find({postId:new ObjectId(postId)},
-            {projection:{_id:0,
-                id:"$_id",
-                content:1,
-                userId:1,
-                userLogin:1,
-                createdAt:1}})
-            .skip((pageNumber-1)*pageSize)
-            .limit(pageSize)
-            .sort( {[sortBy] : sortDirection} )
-            .toArray();*/
-
         const comments = await CommentsModel.aggregate([{$match:{"postId":new ObjectId(postId)}},{
             $lookup: {
                 from: "likes",

@@ -4,16 +4,18 @@ import {AuthService} from "../application/auth-service";
 import {JwtService} from "../application/jwt-service";
 import {Request, Response} from "express";
 import dayjs from "dayjs";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 @injectable()
 export class AuthController {
-    constructor(protected sessionService:SessionService,
-                protected userService:UserService,
-                protected authService:AuthService,
-                protected jwtService:JwtService
+
+    constructor(@inject(SessionService) protected sessionService:SessionService,
+                @inject(UserService) protected userService:UserService,
+                @inject(AuthService) protected authService:AuthService,
+                @inject(JwtService) protected jwtService:JwtService
     ) {
     }
     async login(req: Request, res: Response) {
+        console.log(this)
         const user = await this.userService.checkCredentials(req.body.login, req.body.password)
         if (!user) {
             res.sendStatus(401)

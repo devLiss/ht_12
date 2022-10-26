@@ -7,6 +7,6 @@ export const sessionRouter = Router({})
 
 const sessionController = container.resolve(SessionController)
 
-sessionRouter.get('/', sessionController.getUserSessions)
-sessionRouter.delete('/', sessionController.deleteAllSessions)
-sessionRouter.delete('/:id', sessionController.deleteOtherSessions)
+sessionRouter.get('/', sessionController.getUserSessions.bind(sessionController))
+sessionRouter.delete('/', sessionController.deleteAllSessions.bind(sessionController))
+sessionRouter.delete('/:id', sessionController.deleteOtherSessions.bind(sessionController))

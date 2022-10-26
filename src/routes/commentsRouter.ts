@@ -9,7 +9,7 @@ import {CommentsController} from "../controllers/comment-controller";
 export const commentsRouter = Router({})
 const commentsController = container.resolve(CommentsController)
 
-commentsRouter.put('/:commentId/like-status',authMiddleware, likeStatusValidation, inputValidationMiddleware, commentsController.makeLike)
-commentsRouter.get('/:id',commentsController.getComment)
-commentsRouter.delete('/:commentId',authMiddleware, commentsController.deleteComment)
-commentsRouter.put('/:commentId',authMiddleware,body('content').trim().isLength({min:20, max:300}),inputValidationMiddleware,commentsController.updateComment)
+commentsRouter.put('/:commentId/like-status',authMiddleware, likeStatusValidation, inputValidationMiddleware, commentsController.makeLike.bind(commentsController))
+commentsRouter.get('/:id',commentsController.getComment.bind(commentsController))
+commentsRouter.delete('/:commentId',authMiddleware, commentsController.deleteComment.bind(commentsController))
+commentsRouter.put('/:commentId',authMiddleware,body('content').trim().isLength({min:20, max:300}),inputValidationMiddleware,commentsController.updateComment.bind(commentsController))

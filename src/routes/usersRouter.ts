@@ -14,6 +14,6 @@ import {UserController} from "../controllers/user-controller";
 export const userRouter = Router({})
 const userController = container.resolve(UserController)
 
-userRouter.get('/',searchLoginTermSanitizer,searchEmailTermSanitizer, pageNumberSanitizer, pageSizeSanitizer, sortBySanitizer,sortDirectionSanitizer,userController.getUsers)
-userRouter.post('/'/*,authGuard*/,loginValidator, passwordValidator, emailVAlidator, inputValidationMiddleware, userController.createUser)
-userRouter.delete('/:id',authGuard, inputValidationMiddleware, userController.deleteUser)
+userRouter.get('/',searchLoginTermSanitizer,searchEmailTermSanitizer, pageNumberSanitizer, pageSizeSanitizer, sortBySanitizer,sortDirectionSanitizer,userController.getUsers.bind(userController))
+userRouter.post('/'/*,authGuard*/,loginValidator, passwordValidator, emailVAlidator, inputValidationMiddleware, userController.createUser.bind(userController))
+userRouter.delete('/:id',authGuard, inputValidationMiddleware, userController.deleteUser.bind(userController))

@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import {injectable} from "inversify";
 import {Request, Response} from "express";
 import {CommentsService} from "../application/comments-service";
@@ -22,10 +23,11 @@ export class CommentsController{
             return
         }
         //@ts-ignore
-        const result = await commentsService.makeLike(req.params.commentId, req.user!.id!, req.body.likeStatus)
+        const result = await this.commentsService.makeLike(req.params.commentId, req.user!.id!, req.body.likeStatus)
         res.sendStatus(204)}
 
-    async getComment(req:Request, res:Response){let currentUserId = new ObjectId();
+    async getComment(req:Request, res:Response){
+        let currentUserId = new ObjectId();
         if(req.headers.authorization) {
             const token = req.headers.authorization.split(' ')[1]
             console.log(token)

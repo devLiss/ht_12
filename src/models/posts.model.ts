@@ -1,11 +1,24 @@
 import mongoose from "mongoose";
 
+const extendedLikesInfo = new mongoose.Schema({
+    "likesCount": Number,
+    "dislikesCount": Number,
+    "myStatus": String,
+    "newestLikes": [
+        {
+            "addedAt": String,
+            "userId": String,
+            "login": String
+        }
+    ]
+},{_id:false, versionKey:false})
 const postsSchema = new mongoose.Schema({
     title:String,
     shortDescription:String,
     content:String,
     blogId:String,
+    extendedLikesInfo:{type:extendedLikesInfo}
 },{
-    versionKey: false // You should be aware of the outcome after set to false
+    versionKey: false
 })
 export const PostsModel = mongoose.model('posts', postsSchema)

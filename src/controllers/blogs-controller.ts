@@ -2,12 +2,17 @@ import {Request, Response} from "express";
 import {BlogsService} from "../application/blogs-service";
 import {PostService} from "../application/post-service";
 import {injectable} from "inversify";
+import {ObjectId} from "mongodb";
+import {JwtService} from "../application/jwt-service";
+import {UserService} from "../application/user-service";
 
 @injectable()
 export class BlogsController {
     constructor(
         protected blogsService: BlogsService,
-        protected postService: PostService) {
+        protected postService: PostService,
+        protected jwtService: JwtService,
+        protected userService: UserService) {
     }
 
     async getAllBlogs(req: Request, res: Response) {
@@ -19,13 +24,26 @@ export class BlogsController {
     }
 
     async getPostsByBlogId(req: Request, res: Response) {
+
+        let currentUserId = new ObjectId();
+        if(req.headers.authorization) {
+            const token = req.headers.authorization.split(' ')[1]
+            console.log(token)
+            const userId = await this.jwtService.getUserByAccessToken(token);
+            console.log("UserId = " + userId)
+
+            if(userId){
+                const user = await this.userService.getUserById(userId.toString());
+                if(user){currentUserId = user.id}
+            }
+        }
         const blog = await this.blogsService.findBlogById(req.params.id);
         console.log(blog);
         if (!blog) {
             res.send(404)
             return
         }
-        const posts = await this.postService.getPostsByBlogId(req.params.id, +req.query.pageNumber!, +req.query.pageSize!, req.query.sortBy!, req.query.sortDirection)
+        const posts = await this.postService.getPostsByBlogId(currentUserId, blog.id, +req.query.pageNumber!, +req.query.pageSize!, req.query.sortBy!, req.query.sortDirection)
         res.status(200).send(posts);
     }
 

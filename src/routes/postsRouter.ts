@@ -2,6 +2,7 @@ import {Router} from "express";
 import {authGuard} from "../middlewares/authGuard";
 import {inputValidationMiddleware} from "../middlewares/inputValidationMiddleware";
 import {
+    likeStatusValidation,
     postBlogIdValidation,
     postContentValidation,
     postShortDescrValidation,
@@ -22,10 +23,11 @@ import {PostController} from "../controllers/post-controller";
 export const postsRouter = Router({})
 const postController = container.resolve(PostController)
 
-postsRouter.get('/', pageNumberSanitizer, pageSizeSanitizer, sortBySanitizer,sortDirectionSanitizer, postController.getPosts)
-postsRouter.post('/', authGuard, postTitleValidation,postShortDescrValidation, postContentValidation, postBlogIdValidation,inputValidationMiddleware, postController.createPost)
-postsRouter.get('/:id', postController.getPostById)
-postsRouter.put('/:id', authGuard, postTitleValidation,postShortDescrValidation, postContentValidation, postBlogIdValidation,inputValidationMiddleware,postController.updatePost)
-postsRouter.delete('/:id', authGuard,postController.deletePost)
-postsRouter.get('/:postId/comments', pageNumberSanitizer, pageSizeSanitizer, sortBySanitizer,sortDirectionSanitizer, postController.getCommentsByPostId)
-postsRouter.post('/:postId/comments',authMiddleware,body('content').trim().isLength({min:20, max:300}),inputValidationMiddleware, postController.createComment)
+postsRouter.get('/', pageNumberSanitizer, pageSizeSanitizer, sortBySanitizer,sortDirectionSanitizer, postController.getPosts.bind(postController))
+postsRouter.post('/', authGuard, postTitleValidation,postShortDescrValidation, postContentValidation, postBlogIdValidation,inputValidationMiddleware, postController.createPost.bind(postController))
+postsRouter.get('/:id', postController.getPostById.bind(postController))
+postsRouter.put('/:id', authGuard, postTitleValidation,postShortDescrValidation, postContentValidation, postBlogIdValidation,inputValidationMiddleware,postController.updatePost.bind(postController))
+postsRouter.delete('/:id', authGuard,postController.deletePost.bind(postController))
+postsRouter.get('/:postId/comments', pageNumberSanitizer, pageSizeSanitizer, sortBySanitizer,sortDirectionSanitizer, postController.getCommentsByPostId.bind(postController))
+postsRouter.post('/:postId/comments',authMiddleware,body('content').trim().isLength({min:20, max:300}),inputValidationMiddleware, postController.createComment.bind(postController))
+postsRouter.put('/:postId/like-status',authMiddleware, likeStatusValidation, inputValidationMiddleware, postController.makeLike.bind(postController))

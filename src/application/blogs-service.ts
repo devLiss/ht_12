@@ -1,10 +1,10 @@
 import {BlogsRepo} from "../repositories/blog-db-repo";
 import {blogType} from "../types";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 @injectable()
 export class BlogsService{
 
-    constructor(protected blogsRepo:BlogsRepo) {
+    constructor(@inject(BlogsRepo) protected blogsRepo:BlogsRepo) {
     }
     async findAllBlogs(searchNameTerm: any, pageNumber: number, pageSize: number, sortBy: any, sortDirection: any){
         return await this.blogsRepo.findAllBlogs(searchNameTerm, pageNumber,pageSize, sortBy, sortDirection);

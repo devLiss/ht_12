@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const likesScheme = new mongoose.Schema({
     commentId:mongoose.SchemaTypes.ObjectId,
-    status:String,
+    postId:mongoose.SchemaTypes.ObjectId,
+    login:{type:String},
+    addedAt:{type:String},
+    status:{type:String,required:true},
     userId:mongoose.SchemaTypes.ObjectId
 },{
     versionKey: false // You should be aware of the outcome after set to false

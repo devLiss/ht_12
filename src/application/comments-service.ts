@@ -5,8 +5,8 @@ import {inject, injectable} from "inversify";
 @injectable()
 export class CommentsService{
 
-    constructor(protected commentRepo:CommentRepo,
-                protected likesDbRepo:LikesRepo) {
+    constructor(@inject(CommentRepo) protected commentRepo:CommentRepo,
+                @inject(LikesRepo) protected likesDbRepo:LikesRepo) {
     }
     async createComment(content:string, postId:string, userId:string, userName:string){
         const newComment = {

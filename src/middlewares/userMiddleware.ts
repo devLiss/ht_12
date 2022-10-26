@@ -1,6 +1,7 @@
 import {body, CustomValidator} from "express-validator";
-import {userRepo} from "../repositories/user-db-repo";
-
+import {UserRepo} from "../repositories/user-db-repo";
+import {container} from "../composition-root";
+const userRepo = container.resolve(UserRepo)
 export const loginValidator = body('login').trim().isLength({min:3, max:10})
 
 export const passwordValidator = body('password').trim().isLength({min:6, max:20})

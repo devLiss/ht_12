@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
 import {v4 as uuidv4} from 'uuid'
 import add from 'date-fns/add';
-import {emailManager} from "../managers/emailManager";
+import {inject, injectable} from "inversify";
 import {UserRepo} from "../repositories/user-db-repo";
-import {injectable} from "inversify";
+import {emailManager} from "../managers/emailManager";
 
 @injectable()
 export class UserService{
-    constructor(protected userRepo: UserRepo) {
+    constructor(@inject(UserRepo) protected userRepo: UserRepo ) {
     }
     async createUser(login:string, password:string, email:string):Promise<any>{
         console.log("create user")

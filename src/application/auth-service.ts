@@ -1,14 +1,14 @@
-import {EmailManager} from "../managers/emailManager";
+import {emailManager} from "../managers/emailManager";
 import {UserRepo} from "../repositories/user-db-repo";
 import {UserService} from "./user-service";
 import {v4 as uuidv4} from "uuid";
 import add from "date-fns/add";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 @injectable()
 export class AuthService{
-    constructor(protected userRepo:UserRepo,
-                protected userService:UserService,
-                protected emailManager:EmailManager) {
+    constructor(@inject(UserRepo) protected userRepo:UserRepo,
+                @inject(UserService) protected userService:UserService
+                /*protected emailManager:EmailManager*/) {
     }
     async confirmEmail(code:string){
         const user = await this.userRepo.getUserByCode(code);
@@ -37,7 +37,7 @@ export class AuthService{
         }
         console.log(recoveryCode)
         const updatedUser = await this.userRepo.createRecoveryData(user.id, recoveryData)
-        const result = await this.emailManager.sendRecoveryCode(updatedUser)
+        const result = await emailManager.sendRecoveryCode(updatedUser)
         return result
     }
     async confirmPassword(newPassword:string, recoveryCode:string){
@@ -61,7 +61,7 @@ export class AuthService{
         const confirmCode = uuidv4();
         const updateRes = await this.userRepo.updateConfirmationCode(user.id, confirmCode)
         user = await this.userRepo.getByEmail(email);
-        const result = await this.emailManager.sendConfirmation(user)
+        const result = await emailManager.sendConfirmation(user)
         return result
     }
 }

@@ -1,19 +1,23 @@
+import "reflect-metadata";
 import express, {NextFunction, Request, Response} from 'express'
 import bodyParser from "body-parser";
 import {blogsRouter} from "./routes/blogsRouter";
 import {postsRouter} from "./routes/postsRouter";
 import {runDB} from "./repositories/db";
-import {blogsRepo} from "./repositories/blog-db-repo";
-import {postRepo} from "./repositories/post-db-repo";
 import {userRouter} from "./routes/usersRouter";
 import {authRouter} from "./routes/authRouter";
-import {userRepo} from "./repositories/user-db-repo";
 import * as dotenv from 'dotenv'
 import {commentsRouter} from "./routes/commentsRouter";
-import {commentRepo} from "./repositories/comment-db-repo";
 import cookieParser from 'cookie-parser'
-import {sessionDbRepo} from "./repositories/session-db-repo";
 import {sessionRouter} from "./routes/sessionRouter";
+import {container} from "./composition-root";
+import {BlogsRepo} from "./repositories/blog-db-repo";
+import {PostRepo} from "./repositories/post-db-repo";
+import {UserRepo} from "./repositories/user-db-repo";
+import {CommentRepo} from "./repositories/comment-db-repo";
+import {SessionDbRepo} from "./repositories/session-db-repo";
+import {RequestDbRepo} from "./repositories/request-db-repo";
+import {LikesRepo} from "./repositories/likes-db-repo";
 
 dotenv.config()
 export const app = express()
@@ -23,13 +27,22 @@ app.use(bodyParser.json());
 app.use(cookieParser())
 app.set('trust proxy', true)
 
-app.delete('/testing/all-data',async (req: Request, res: Response) => {
-    await blogsRepo.deleteAll();
-    await postRepo.deleteAll();
-    await userRepo.deleteAll();
-    await commentRepo.deleteAll();
-    //await sessionDbRepo.deleteAll();
+const blogsRepo = container.resolve(BlogsRepo)
+const postRepo = container.resolve(PostRepo)
+const userRepo = container.resolve(UserRepo)
+const commentRepo = container.resolve(CommentRepo)
+const sessionDbRepo = container.resolve(SessionDbRepo)
+const requestDbRepo = container.resolve(RequestDbRepo)
+const likedDbRepo = container.resolve(LikesRepo);
 
+app.delete('/testing/all-data',async (req: Request, res: Response) => {
+    await blogsRepo.deleteAll()
+    await postRepo.deleteAll()
+    await userRepo.deleteAll()
+    await commentRepo.deleteAll()
+    await sessionDbRepo.deleteAll()
+    //requestDbRepo.deleteAll()
+    //likedDbRepo.deleteAll()
     res.status(204).send([])
 })
 app.use('/blogs', blogsRouter)
